@@ -197,8 +197,7 @@ def _terraform_provider_download_impl(ctx):
 
     # First get SHA256SUMS file so we can get all of the individual zip SHAs
     ctx.report_progress("Downloading and extracting SHA256SUMS file")
-    sha256sums_url = "{base}/terraform-provider-{name}/{version}/terraform-provider-{name}_{version}_SHA256SUMS".format(
-        base = hashicorp_base_url,
+    sha256sums_url = (ctx.attr.download_base_url + "/terraform-provider-{name}_{version}_SHA256SUMS").format(
         name = name,
         version = version,
     )
@@ -229,7 +228,7 @@ def _terraform_provider_download_impl(ctx):
         )
     sha256 = sha_by_zip[zip]
 
-    url = "{base}/terraform-provider-{name}/{version}/{zip}".format(
+    url = (ctx.attr.download_base_url + "/{zip}").format(
         base = hashicorp_base_url,
         name = name,
         version = version,
@@ -251,7 +250,7 @@ def _terraform_provider_download_impl(ctx):
 
 terraform_provider(
     name = "provider",
-    provider = glob(["terraform-provider-{name}_v{version}_x*"])[0],
+    provider = glob(["terraform-provider-{name}_v{version}*"])[0],
     provider_name = "{name}",
     version = "{version}",
     source = "{source}",
@@ -285,6 +284,10 @@ terraform_provider_download = repository_rule(
         ),
         "source": attr.string(
             mandatory = True,
+            doc = "Source for provider used in required_providers block",
+        ),
+        "download_base_url": attr.string(
+            default = "https://releases.hashicorp.com/terraform-provider-{name}/{version}",
             doc = "Source for provider used in required_providers block",
         ),
     },
@@ -348,7 +351,7 @@ terraform_provider = rule(
     },
 )
 
-def download_terraform_provider_versions(provider_name, source, versions):
+def download_terraform_provider_versions(provider_name, source, versions, **kwargs):
     """Downloads multiple terraform provider versions.
 
     Args:
@@ -367,4 +370,5 @@ def download_terraform_provider_versions(provider_name, source, versions):
             version = version,
             source = source,
             sha256 = sha,
+            **kwargs,
         )
