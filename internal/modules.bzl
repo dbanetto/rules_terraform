@@ -117,6 +117,7 @@ def _terraform_root_module_impl(ctx):
 
     # Create a plugin cache dir.
     plugin_cache_dir = "plugin_cache"
+    plugin_mirror_dir = "plugin_mirror"
     for provider in providers_list:
         output = ctx.actions.declare_file("{}/{}/{}".format(
             plugin_cache_dir,
@@ -132,7 +133,7 @@ def _terraform_root_module_impl(ctx):
         # Special filesystem mirror format
         if terraform_version >= "0.13.2":
             output = ctx.actions.declare_file("{}/{}/{}/{}/{}".format(
-                plugin_cache_dir,
+                plugin_mirror_dir,
                 provider.source,
                 provider.version,
                 provider.platform,
@@ -156,11 +157,11 @@ plugin_cache_dir = "{}"
         terraformrc_content += """
 provider_installation {{
   filesystem_mirror {{
-    path    = "{plugin_cache_dir}"
+    path    = "{plugin_mirror_dir}"
     include = ["*/*/*"]
   }}
 }}
-        """.format(plugin_cache_dir = plugin_cache_dir)
+        """.format(plugin_mirror_dir = plugin_mirror_dir)
 
     ctx.actions.write(
         output = terraformrc,
