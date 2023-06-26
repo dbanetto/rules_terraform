@@ -176,7 +176,7 @@ provider_installation {{
     ctx.actions.write(
         output = wrapper,
         is_executable = True,
-        content = """
+        content = """#!/usr/bin/env bash
 set -eu
 
 terraform="$(pwd)/{terraform}"

@@ -16,7 +16,7 @@ def _terraform_validate_test_impl(ctx):
     ctx.actions.write(
         output = exe,
         is_executable = True,
-        content = """
+        content = """#!/usr/bin/env bash
 set -eu
 
 export TF_DATA_DIR=.terraform
@@ -58,7 +58,7 @@ def _terraform_format_test_impl(ctx):
     ctx.actions.write(
         output = exe,
         is_executable = True,
-        content = """
+        content = """#!/usr/bin/env bash
 set -eu
 
 terraform="$(pwd)/{terraform}"
