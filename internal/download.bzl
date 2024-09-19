@@ -75,15 +75,10 @@ def _detect_platform(ctx):
     else:
         fail("Unsupported operating system: " + ctx.os.name)
 
-    uname_res = ctx.execute(["uname", "-m"])
-    if uname_res.return_code == 0:
-        uname = uname_res.stdout.strip()
-        if uname == "x86_64":
-            arch = "amd64"
-        elif uname == "arm64":
-            arch = "arm64"
-        else:
-            fail("Unable to determing processor architecture.")
+    if ctx.os.arch == "aarch64":
+        arch = "arm64"
+    elif ctx.os.arch in ["amd64", "x86-64"]:
+        arch = "amd64"
     else:
         fail("Unable to determing processor architecture.")
 
