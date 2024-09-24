@@ -246,8 +246,8 @@ exec "$terraform" $@""".format(
 export TF_DATA_DIR=".terraform";
 export TF_SKIP_PROVIDER_VERIFY="1";
 export TF_CLI_CONFIG_FILE="{terraformrc}";
-"{terraform}" -chdir="{package}" init -input=false -backend=false &> /dev/null &&
-exec "{terraform}" -chdir="{package}" validate &> {output} && cat /dev/null > {output}""".format(
+"{terraform}" -chdir="{package}" init -input=false -backend=false &> {output} &&
+"{terraform}" -chdir="{package}" validate &> {output} || ( cat {output} && false )""".format(
             package = validation_output.dirname,
             terraform = terraform_binary.path,
             output = validation_output.path,
